@@ -1,0 +1,252 @@
+Rating Scale : 03
+1-4
+Problem:
+Write a function to deserialize the following JSON string into a C# object, and then serialize it back into a JSON string after modifying one of the properties.
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace CodeBaseTestingProject
+{
+
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public double Price { get; set; }
+    }
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+
+            
+            string jsonString = "{ \"id\": 1, \"name\": \"Test\", \"price\": 100.0 }";
+
+            // Deserialize JSON to C# object
+            Product product = JsonSerializer.Deserialize<Product>(jsonString);
+
+            // Modify 
+            if (product != null)
+            {
+                product.Price = 150.0; 
+            }
+
+            
+            string modifiedJsonString = JsonSerializer.Serialize(product, new JsonSerializerOptions { WriteIndented = true });
+
+            
+            Console.WriteLine(modifiedJsonString);
+
+
+
+            Console.ReadLine();
+        }
+    }
+}
+
+
+======================================================================
+
+Rating Scale : 5
+
+Problem:
+Write a function that takes a list of integers and returns a dictionary where the keys are the integers and the values are the number of 
+times each integer appears in the list. Use LINQ to solve this problem.
+
+Expected Output Example:
+Input: [1, 2, 2, 3, 3, 3]
+Output: { 1: 1, 2: 2, 3: 3 }
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace CodeBaseTestingProject
+{
+
+    
+    internal class Program
+    {
+        static Dictionary<int, int> GetFrequencyDictionary(List<int> numbers)
+        {
+            
+            return numbers.GroupBy(n => n)
+                          .ToDictionary(group => group.Key, group => group.Count());
+        }
+
+        static void Main(string[] args)
+        {
+
+            
+            List<int> inputList = new List<int> { 1, 2, 2, 3, 3, 3 };
+
+            // Get the dictionary with counts
+            Dictionary<int, int> result = GetFrequencyDictionary(inputList);
+
+            
+            Console.WriteLine("Output:");
+
+            foreach (var kvp in result)
+            {
+                Console.WriteLine($"{kvp.Key}: {kvp.Value}");
+            }
+
+
+            Console.ReadLine();
+        }
+    }
+}
+
+
+============================================================================
+
+
+Rating Scale : 8
+
+
+2-Problem:
+Create a system where different payment methods (CreditCardPayment, PayPalPayment, BankTransferPayment) inherit from a base class PaymentMethod. 
+Each class should implement a ProcessPayment method differently. 
+Demonstrate polymorphism by processing a list of different payment methods.
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace CodeBaseTestingProject
+{
+
+    abstract class PaymentMethod
+    {
+        public abstract void ProcessPayment();
+    }
+
+    // Credit Card Payment
+    class CreditCardPayment : PaymentMethod
+    {
+        public override void ProcessPayment()
+        {
+            Console.WriteLine("Processing payment via Credit Card.");
+        }
+    }
+
+    // PayPal Payment
+    class PayPalPayment : PaymentMethod
+    {
+        public override void ProcessPayment()
+        {
+            Console.WriteLine("Processing payment via PayPal.");
+        }
+    }
+
+    // Bank Transfer Payment
+    class BankTransferPayment : PaymentMethod
+    {
+        public override void ProcessPayment()
+        {
+            Console.WriteLine("Processing payment via Bank Transfer.");
+        }
+    }
+
+
+    internal class Program
+    {
+        
+
+        static void Main(string[] args)
+        {
+            List<PaymentMethod> paymentMethods = new List<PaymentMethod>
+        {
+            new CreditCardPayment(),
+            new PayPalPayment(),
+            new BankTransferPayment()
+        };
+
+            // Process of each payment method
+
+            Console.WriteLine("Processing Payments:");
+
+            foreach (var paymentMethod in paymentMethods)
+            {
+                paymentMethod.ProcessPayment();
+            }
+
+
+            Console.ReadLine();
+        }
+    }
+}
+
+=================================================================
+
+
+3-Problem:
+Write an asynchronous method that fetches data from two APIs simultaneously and combines their results. Use HttpClient for the API calls.
+
+
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        
+
+        string api1Url = "https://jsonplaceholder.typicode.com/posts/1";
+        string api2Url = "https://jsonplaceholder.typicode.com/posts/2";
+
+        try
+        {
+           
+            var combinedResult = await FetchAndCombineDataAsync(api1Url, api2Url);
+
+            
+            Console.WriteLine("Combined Result:");
+
+            Console.WriteLine(combinedResult);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+
+        Console.ReadLine();
+    }
+
+    static async Task<string> FetchAndCombineDataAsync(string api1Url, string api2Url)
+    {
+
+        HttpClient client = new HttpClient();
+        
+        Task<string> task1 = client.GetStringAsync(api1Url);
+        Task<string> task2 = client.GetStringAsync(api2Url);
+
+       
+        await Task.WhenAll(task1, task2);
+
+       
+        string result1 = await task1;
+        string result2 = await task2;
+
+        return $"API 1 Response: {result1}\n\nAPI 2 Response: {result2}";
+    }
+}
+
+
+
+
+
+
